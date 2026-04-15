@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Helvetica Neue", Arial, sans-serif;
+
+  --color-primary: #2D5BFF;
+  --color-accent: #00D1FF;
+  --color-on-primary: #ffffff;
+  
+  --color-surface: #F4F7FB;
+  --color-on-surface: #1A1D23;
+  --color-on-surface-variant: #717684;
+  
+  --color-border: #E8EDF2;
+  
+  --radius-app: 24px;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  body {
+    @apply bg-white text-on-surface font-sans antialiased transition-colors duration-300;
+  }
+  .dark body {
+    @apply bg-[#0f0f11] text-white;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-sans font-bold tracking-tight;
+  }
+}
+
+.glass-header {
+  @apply bg-white/80 backdrop-blur-xl border-b border-border transition-colors duration-300;
+}
+.dark .glass-header {
+  @apply bg-[#0f0f11]/80 border-white/10;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.main-card {
+  @apply bg-primary rounded-app p-6 text-white relative overflow-hidden;
+}
+
+.stat-item {
+  @apply p-4 bg-surface rounded-2xl flex flex-col gap-1 transition-colors duration-300;
+}
+.dark .stat-item {
+  @apply bg-white/5;
+}
+
+.category-chip {
+  @apply px-4 py-2 bg-surface rounded-full text-sm font-semibold transition-all;
+}
+.dark .category-chip {
+  @apply bg-white/5 text-white/70;
+}
+
+.category-chip.active {
+  @apply bg-primary text-white;
+}
+.dark .category-chip.active {
+  @apply bg-primary text-white;
+}
+
+.dark .bg-white {
+  @apply bg-[#1a1a1d] transition-colors duration-300;
+}
+.dark .border-border {
+  @apply border-white/10;
+}
+.dark .text-on-surface {
+  @apply text-white;
+}
+.dark .text-on-surface-variant {
+  @apply text-white/60;
+}
+.dark .bg-surface {
+  @apply bg-white/5;
+}
