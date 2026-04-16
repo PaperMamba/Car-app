@@ -7,11 +7,21 @@ type ExploreScreenProps = {
   cars: Car[];
   activeCategory: string;
   onCategoryChange: (category: string) => void;
+  searchQuery: string;
+  onSearchChange: (query: string) => void;
   onSelectCar: (car: Car) => void;
   onOpenFilters: () => void;
 };
 
-export default function ExploreScreen({ cars, activeCategory, onCategoryChange, onSelectCar, onOpenFilters }: ExploreScreenProps) {
+export default function ExploreScreen({ 
+  cars, 
+  activeCategory, 
+  onCategoryChange, 
+  searchQuery, 
+  onSearchChange, 
+  onSelectCar, 
+  onOpenFilters 
+}: ExploreScreenProps) {
   const categories = ['Tout', 'Luxury', 'SUV', 'Economy', 'Electric', 'Sports'];
 
   return (
@@ -44,6 +54,8 @@ export default function ExploreScreen({ cars, activeCategory, onCategoryChange, 
             </div>
             <input 
               type="text" 
+              value={searchQuery}
+              onChange={(e) => onSearchChange(e.target.value)}
               placeholder="Rechercher des voitures..."
               className="w-full h-12 pl-12 pr-4 bg-surface dark:bg-white/5 border-none focus:ring-2 focus:ring-primary rounded-xl text-sm font-medium text-on-surface dark:text-white placeholder:text-on-surface-variant transition-all duration-300"
             />

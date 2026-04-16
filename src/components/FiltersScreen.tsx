@@ -36,6 +36,7 @@ export default function FiltersScreen({ filters, onUpdateFilters, onClose }: Fil
   const resetFilters = () => {
     onUpdateFilters({
       category: 'Tout',
+      searchQuery: '',
       priceRange: [50, 1000],
       transmission: null,
       features: [],

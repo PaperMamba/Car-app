@@ -11,6 +11,7 @@ import { MOCK_CARS } from './data';
 
 export type FilterState = {
   category: string;
+  searchQuery: string;
   priceRange: [number, number];
   transmission: string | null;
   features: string[];
@@ -29,6 +30,7 @@ export default function App() {
 
   const [filters, setFilters] = useState<FilterState>({
     category: 'Tout',
+    searchQuery: '',
     priceRange: [50, 1000],
     transmission: null,
     features: [],
@@ -50,6 +52,7 @@ export default function App() {
       if (car.price < filters.priceRange[0] || car.price > filters.priceRange[1]) return false;
       if (filters.transmission && car.transmission !== filters.transmission) return false;
       if (filters.features.length > 0 && !filters.features.every(f => car.features.includes(f))) return false;
+      if (filters.searchQuery && !car.name.toLowerCase().includes(filters.searchQuery.toLowerCase())) return false;
       return true;
     });
   }, [filters]);
@@ -102,6 +105,8 @@ export default function App() {
                     cars={filteredCars}
                     activeCategory={filters.category}
                     onCategoryChange={(cat) => setFilters({ ...filters, category: cat })}
+                    searchQuery={filters.searchQuery}
+                    onSearchChange={(query) => setFilters({ ...filters, searchQuery: query })}
                     onSelectCar={setSelectedCar} 
                     onOpenFilters={() => setIsFiltersOpen(true)} 
                   />
