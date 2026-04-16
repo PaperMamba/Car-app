@@ -1,6 +1,6 @@
-import React from 'react';
-import { motion } from 'motion/react';
-import { ArrowLeft, Heart, Share2, Users, Settings2, Fuel, MessageCircle, Award, Thermometer, Music } from 'lucide-react';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { ArrowLeft, Heart, Share2, Users, Settings2, Fuel, MessageCircle, Award, Thermometer, Music, X, CheckCircle, Calendar } from 'lucide-react';
 import { Car } from '../types';
 
 type CarDetailScreenProps = {
@@ -9,6 +9,21 @@ type CarDetailScreenProps = {
 };
 
 export default function CarDetailScreen({ car, onBack }: CarDetailScreenProps) {
+  const [showBookingModal, setShowBookingModal] = useState(false);
+  const [pickupDate, setPickupDate] = useState('');
+  const [returnDate, setReturnDate] = useState('');
+  const [bookingConfirmed, setBookingConfirmed] = useState(false);
+
+  const nights = pickupDate && returnDate
+    ? Math.max(1, Math.round((new Date(returnDate).getTime() - new Date(pickupDate).getTime()) / 86400000))
+    : 1;
+  const total = nights * car.price;
+
+  const handleConfirm = () => {
+    if (!pickupDate || !returnDate) return;
+    setBookingConfirmed(true);
+  };
+
   return (
     <div className="bg-white dark:bg-[#0f0f11] min-h-screen pb-32 transition-colors duration-300">
       {/* Header */}
@@ -163,12 +178,117 @@ export default function CarDetailScreen({ car, onBack }: CarDetailScreenProps) {
         <div className="max-w-3xl mx-auto flex items-center gap-4">
           <motion.button 
             whileTap={{ scale: 0.98 }}
+            onClick={() => setShowBookingModal(true)}
             className="flex-1 bg-primary text-white font-bold py-4 px-8 rounded-xl shadow-lg shadow-primary/20 hover:shadow-xl transition-all active:scale-[0.98]"
           >
             Demander la location
           </motion.button>
         </div>
       </div>
+
+      {/* Booking Modal */}
+      <AnimatePresence>
+        {showBookingModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-end justify-center bg-black/50 backdrop-blur-sm"
+            onClick={(e) => { if (e.target === e.currentTarget) { setShowBookingModal(false); setBookingConfirmed(false); } }}
+          >
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+              className="w-full max-w-lg bg-white dark:bg-[#1a1a1d] rounded-t-3xl p-8 pb-12"
+            >
+              {!bookingConfirmed ? (
+                <>
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-xl font-bold dark:text-white">Réserver ce véhicule</h2>
+                    <motion.button whileTap={{ scale: 0.9 }} onClick={() => setShowBookingModal(false)}>
+                      <X size={22} className="text-on-surface-variant" />
+                    </motion.button>
+                  </div>
+
+                  <div className="space-y-4 mb-6">
+                    <div>
+                      <label className="text-xs font-bold uppercase tracking-wider text-on-surface-variant dark:text-white/60 mb-1.5 block">Date de prise en charge</label>
+                      <div className="flex items-center gap-3 p-4 bg-surface dark:bg-white/5 rounded-2xl">
+                        <Calendar size={18} className="text-primary" />
+                        <input
+                          type="date"
+                          value={pickupDate}
+                          min={new Date().toISOString().split('T')[0]}
+                          onChange={(e) => setPickupDate(e.target.value)}
+                          className="flex-1 bg-transparent text-sm font-bold text-on-surface dark:text-white outline-none"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold uppercase tracking-wider text-on-surface-variant dark:text-white/60 mb-1.5 block">Date de retour</label>
+                      <div className="flex items-center gap-3 p-4 bg-surface dark:bg-white/5 rounded-2xl">
+                        <Calendar size={18} className="text-primary" />
+                        <input
+                          type="date"
+                          value={returnDate}
+                          min={pickupDate || new Date().toISOString().split('T')[0]}
+                          onChange={(e) => setReturnDate(e.target.value)}
+                          className="flex-1 bg-transparent text-sm font-bold text-on-surface dark:text-white outline-none"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {pickupDate && returnDate && (
+                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="p-4 bg-primary/5 rounded-2xl mb-6 border border-primary/20">
+                      <div className="flex justify-between text-sm mb-1">
+                        <span className="text-on-surface-variant">${car.price}/jour × {nights} jour{nights > 1 ? 's' : ''}</span>
+                        <span className="font-bold text-on-surface dark:text-white">${total}</span>
+                      </div>
+                      <div className="flex justify-between font-bold">
+                        <span className="text-primary">Total</span>
+                        <span className="text-primary text-lg">${total}</span>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  <motion.button
+                    whileTap={{ scale: 0.98 }}
+                    onClick={handleConfirm}
+                    disabled={!pickupDate || !returnDate}
+                    className="w-full bg-primary disabled:opacity-40 text-white font-bold py-4 rounded-2xl shadow-lg shadow-primary/20 transition-all"
+                  >
+                    Confirmer la réservation
+                  </motion.button>
+                </>
+              ) : (
+                <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center text-center py-4 space-y-4">
+                  <div className="w-20 h-20 bg-emerald-50 dark:bg-emerald-500/10 rounded-full flex items-center justify-center">
+                    <CheckCircle size={40} className="text-emerald-500" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold dark:text-white mb-1">Réservation confirmée !</h3>
+                    <p className="text-on-surface-variant dark:text-white/60 text-sm">{car.name} · {pickupDate} → {returnDate}</p>
+                  </div>
+                  <div className="w-full p-4 bg-surface dark:bg-white/5 rounded-2xl text-left">
+                    <p className="text-xs text-on-surface-variant uppercase tracking-widest font-bold mb-1">N° de confirmation</p>
+                    <p className="font-bold text-primary">#CR-{Math.floor(Math.random() * 90000 + 10000)}</p>
+                  </div>
+                  <motion.button
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => { setShowBookingModal(false); setBookingConfirmed(false); onBack(); }}
+                    className="w-full bg-primary text-white font-bold py-4 rounded-2xl shadow-lg shadow-primary/20"
+                  >
+                    Retour à l'accueil
+                  </motion.button>
+                </motion.div>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

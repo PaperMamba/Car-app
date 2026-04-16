@@ -33,7 +33,7 @@ export const MOCK_CARS: Car[] = [
     transmission: 'Automatic',
     fuel: 'Petrol',
     description: 'Experience the legendary performance of the Porsche 911 Carrera S. This model features a twin-turbocharged flat-six engine that delivers 443 horsepower.',
-    features: ['Climate Control', 'Entertainment', 'GPS Navigation', 'Bluetooth'],
+    features: ['GPS Navigation', 'Leather Seats', 'Sunroof', 'Bluetooth'],
     location: 'Beverly Hills, CA'
   },
   {
@@ -50,7 +50,7 @@ export const MOCK_CARS: Car[] = [
     transmission: 'Automatic',
     fuel: 'Hybrid',
     description: 'Rugged capability meets modern luxury. The Land Rover Defender is ready for any adventure.',
-    features: ['Off-road Mode', '360 Camera', 'Sunroof'],
+    features: ['GPS Navigation', 'Sunroof', 'Bluetooth'],
     location: 'Malibu, CA'
   },
   {
@@ -66,9 +66,43 @@ export const MOCK_CARS: Car[] = [
     seats: 5,
     transmission: 'Automatic',
     fuel: 'Electric',
-    description: 'The quickest accelerating car in production today. 0-60 mph in 1.99s.',
-    features: ['Autopilot', 'Premium Sound', 'Ludicrous Mode'],
+    description: 'The quickest accelerating car in production today. 0-60 mph in 1.99s with Autopilot, premium sound and a stunning panoramic sunroof.',
+    features: ['GPS Navigation', 'Leather Seats', 'Sunroof', 'Bluetooth'],
     location: 'Palo Alto, CA'
+  },
+  {
+    id: '5',
+    name: 'Toyota Corolla',
+    type: 'Economy Sedan',
+    category: 'Economy',
+    price: 55,
+    rating: 4.5,
+    host: 'Budget Rentals',
+    hostAvatar: 'https://picsum.photos/seed/host5/100/100',
+    image: 'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800&q=80',
+    seats: 5,
+    transmission: 'Automatic',
+    fuel: 'Petrol',
+    description: 'Reliable, fuel-efficient and comfortable. The Toyota Corolla is the perfect everyday city car for short trips and business travel.',
+    features: ['GPS Navigation', 'Bluetooth'],
+    location: 'Los Angeles, CA'
+  },
+  {
+    id: '6',
+    name: 'Honda Civic',
+    type: 'Economy Compact',
+    category: 'Economy',
+    price: 65,
+    rating: 4.4,
+    host: 'EasyRide',
+    hostAvatar: 'https://picsum.photos/seed/host6/100/100',
+    image: 'https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800&q=80',
+    seats: 5,
+    transmission: 'Manual',
+    fuel: 'Petrol',
+    description: 'The Honda Civic is a compact car that strikes the perfect balance between efficiency and driving fun, ideal for city and highway.',
+    features: ['Bluetooth', 'GPS Navigation'],
+    location: 'Santa Monica, CA'
   }
 ];
 

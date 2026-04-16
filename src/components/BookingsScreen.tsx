@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { Settings, Calendar, Clock, ChevronLeft } from 'lucide-react';
+import { Settings, Calendar, Clock } from 'lucide-react';
 import { MOCK_BOOKINGS } from '../data';
 
 export default function BookingsScreen() {
@@ -8,9 +8,6 @@ export default function BookingsScreen() {
     <div className="pb-32 bg-white dark:bg-[#0f0f11] min-h-screen transition-colors duration-300">
       <header className="fixed top-0 w-full z-50 glass-header">
         <div className="flex items-center justify-between px-6 h-16">
-          <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-            <ChevronLeft size={24} className="text-on-surface dark:text-white" />
-          </motion.div>
           <h1 className="font-bold text-lg tracking-tight text-on-surface dark:text-white">Réservations</h1>
           <motion.button whileTap={{ scale: 0.9 }} className="w-10 h-10 flex items-center justify-center rounded-full bg-surface dark:bg-white/5">
             <Settings size={20} className="text-primary" />
