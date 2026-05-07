@@ -1,12 +1,29 @@
-export type Car = {
+export type UserRole = 'Client' | 'AgencyManager';
+
+export interface User {
   id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  avatar: string;
+  agencyId?: string; // Only for AgencyManager
+}
+
+export interface Agency {
+  id: string;
+  name: string;
+  logo: string;
+  rating: number;
+}
+
+export interface Car {
+  id: string;
+  agencyId: string;
   name: string;
   type: string;
   category: string;
   price: number;
   rating: number;
-  host: string;
-  hostAvatar: string;
   image: string;
   seats: number;
   transmission: 'Automatic' | 'Manual';
@@ -16,19 +33,34 @@ export type Car = {
   location: string;
   isFavorite?: boolean;
   isLimited?: boolean;
-};
+  isInternal?: boolean; // True if listed directly by platform
+  coordinates: {
+    lat: number;
+    lng: number;
+  };
+}
 
-export type BookingStatus = 'Upcoming' | 'Completed' | 'Cancelled';
+export type BookingStatus = 'pending' | 'confirmed' | 'cancelled';
 
-export type Booking = {
+export interface FilterState {
+  category: string;
+  searchQuery: string;
+  priceRange: [number, number];
+  transmission: string | null;
+  features: string[];
+}
+
+export interface Booking {
   id: string;
   carId: string;
+  userId: string;
+  agencyId: string;
   carName: string;
   carImage: string;
-  confirmationNumber: string;
   totalPrice: number;
-  pickupDate: string;
-  returnDate: string;
+  startDate: string;
+  endDate: string;
   status: BookingStatus;
-  isRefunded?: boolean;
-};
+  confirmationNumber: string;
+  createdAt: string;
+}

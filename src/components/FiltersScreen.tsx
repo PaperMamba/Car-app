@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { X, Car, Zap, Fuel, Leaf, Navigation, Bluetooth, Sun, Armchair } from 'lucide-react';
-import { FilterState } from '../App';
+import { FilterState } from '../types';
 
 type FiltersScreenProps = {
   filters: FilterState;
@@ -85,7 +85,7 @@ export default function FiltersScreen({ filters, onUpdateFilters, onClose }: Fil
           </div>
         </section>
 
-        {/* Price Range */}
+        {/* Price Range (Simplified for now) */}
         <section className="space-y-6">
           <div className="flex justify-between items-end">
             <h2 className="text-on-surface dark:text-white font-bold text-lg tracking-tight">Budget journalier</h2>
@@ -93,31 +93,19 @@ export default function FiltersScreen({ filters, onUpdateFilters, onClose }: Fil
               ${filters.priceRange[0]} - ${filters.priceRange[1]}+
             </div>
           </div>
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <span className="text-xs text-on-surface-variant w-8">Min</span>
-              <input
-                type="range"
-                min={50}
-                max={filters.priceRange[1] - 10}
-                value={filters.priceRange[0]}
-                onChange={(e) => onUpdateFilters({ ...filters, priceRange: [Number(e.target.value), filters.priceRange[1]] })}
-                className="flex-1 accent-primary h-1.5 rounded-full cursor-pointer"
-              />
-              <span className="text-xs font-bold text-primary w-12 text-right">${filters.priceRange[0]}</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="text-xs text-on-surface-variant w-8">Max</span>
-              <input
-                type="range"
-                min={filters.priceRange[0] + 10}
-                max={1000}
-                value={filters.priceRange[1]}
-                onChange={(e) => onUpdateFilters({ ...filters, priceRange: [filters.priceRange[0], Number(e.target.value)] })}
-                className="flex-1 accent-primary h-1.5 rounded-full cursor-pointer"
-              />
-              <span className="text-xs font-bold text-primary w-12 text-right">${filters.priceRange[1]}</span>
-            </div>
+          <div className="relative h-12 flex items-center">
+            <div className="absolute w-full h-1.5 bg-surface dark:bg-white/10 rounded-full"></div>
+            <div className="absolute left-0 right-1/4 h-1.5 bg-primary rounded-full"></div>
+            <motion.div 
+              drag="x"
+              dragConstraints={{ left: 0, right: 300 }}
+              className="absolute left-0 w-6 h-6 bg-white border-2 border-primary rounded-full shadow-lg cursor-pointer transform -translate-y-1/2 top-1/2"
+            />
+            <motion.div 
+              drag="x"
+              dragConstraints={{ left: 0, right: 300 }}
+              className="absolute left-[75%] w-6 h-6 bg-white border-2 border-primary rounded-full shadow-lg cursor-pointer transform -translate-y-1/2 top-1/2"
+            />
           </div>
         </section>
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import ExploreScreen from './components/ExploreScreen';
 import BookingsScreen from './components/BookingsScreen';
@@ -6,58 +6,23 @@ import ProfileScreen from './components/ProfileScreen';
 import CarDetailScreen from './components/CarDetailScreen';
 import FiltersScreen from './components/FiltersScreen';
 import BottomNav from './components/BottomNav';
+import AgencyDashboard from './components/AgencyDashboard';
 import { Car } from './types';
-import { MOCK_CARS } from './data';
+import { BookingProvider, useBooking } from './contexts/BookingContext';
 
-export type FilterState = {
-  category: string;
-  searchQuery: string;
-  priceRange: [number, number];
-  transmission: string | null;
-  features: string[];
-};
+function AppContent() {
+  const { 
+    currentUser, 
+    filteredCars, 
+    filters, 
+    setFilters, 
+    isDarkMode, 
+    toggleDarkMode 
+  } = useBooking();
 
-export default function App() {
   const [activeTab, setActiveTab] = useState('explore');
   const [selectedCar, setSelectedCar] = useState<Car | null>(null);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('theme') === 'dark';
-    }
-    return false;
-  });
-
-  const [filters, setFilters] = useState<FilterState>({
-    category: 'Tout',
-    searchQuery: '',
-    priceRange: [50, 1000],
-    transmission: null,
-    features: [],
-  });
-
-  useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
-  }, [isDarkMode]);
-
-  const filteredCars = useMemo(() => {
-    return MOCK_CARS.filter(car => {
-      if (filters.category !== 'Tout' && car.category !== filters.category) return false;
-      if (car.price < filters.priceRange[0] || car.price > filters.priceRange[1]) return false;
-      if (filters.transmission && car.transmission !== filters.transmission) return false;
-      if (filters.features.length > 0 && !filters.features.every(f => car.features.includes(f))) return false;
-      if (filters.searchQuery && !car.name.toLowerCase().includes(filters.searchQuery.toLowerCase())) return false;
-      return true;
-    });
-  }, [filters]);
-
-  const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
 
   const screenVariants = {
     initial: { opacity: 0, x: 20 },
@@ -102,17 +67,17 @@ export default function App() {
               case 'explore':
                 return (
                   <ExploreScreen 
-                    cars={filteredCars}
                     activeCategory={filters.category}
                     onCategoryChange={(cat) => setFilters({ ...filters, category: cat })}
                     searchQuery={filters.searchQuery}
                     onSearchChange={(query) => setFilters({ ...filters, searchQuery: query })}
                     onSelectCar={setSelectedCar} 
-                    onOpenFilters={() => setIsFiltersOpen(true)} 
+                    onOpenFilters={() => setIsFiltersOpen(true)}
+                    // cars prop removed as it's now internal to ExploreScreen via context
                   />
                 );
               case 'bookings':
-                return <BookingsScreen />;
+                return currentUser?.role === 'AgencyManager' ? <AgencyDashboard /> : <BookingsScreen />;
               case 'profile':
                 return <ProfileScreen isDarkMode={isDarkMode} onToggleDarkMode={toggleDarkMode} />;
               case 'favorites':
@@ -155,5 +120,13 @@ export default function App() {
         <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
       )}
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <BookingProvider>
+      <AppContent />
+    </BookingProvider>
   );
 }
