@@ -11,9 +11,13 @@ interface BookingContextType {
   setFilters: (filters: FilterState) => void;
   filteredCars: Car[];
   login: (email: string) => void;
+  loginSocial: (provider: 'Google' | 'Apple' | 'SSO') => void;
   logout: () => void;
+  updateProfile: (data: Partial<User>) => void;
   createBooking: (car: Car, startDate: string, endDate: string) => void;
   updateBookingStatus: (bookingId: string, status: BookingStatus) => void;
+  addCar: (carData: Partial<Car>) => void;
+  removeCar: (carId: string) => void;
   isDarkMode: boolean;
   toggleDarkMode: () => void;
 }
@@ -24,6 +28,11 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [currentUser, setCurrentUser] = useState<User | null>(() => {
     const saved = localStorage.getItem('currentUser');
     return saved ? JSON.parse(saved) : MOCK_USERS[0]; // Default to Client
+  });
+
+  const [cars, setCars] = useState<Car[]>(() => {
+    const saved = localStorage.getItem('cars');
+    return saved ? JSON.parse(saved) : MOCK_CARS;
   });
 
   const [bookings, setBookings] = useState<Booking[]>(() => {
@@ -52,6 +61,10 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
   }, [bookings]);
 
   useEffect(() => {
+    localStorage.setItem('cars', JSON.stringify(cars));
+  }, [cars]);
+
+  useEffect(() => {
     if (isDarkMode) {
       document.documentElement.classList.add('dark');
       localStorage.setItem('theme', 'dark');
@@ -68,7 +81,22 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     if (user) setCurrentUser(user);
   };
 
-  const logout = () => setCurrentUser(null);
+  const loginSocial = (provider: 'Google' | 'Apple' | 'SSO') => {
+    console.log(`Logging in with ${provider}`);
+    // Simulate social login by picking user_1 (Client)
+    setCurrentUser(MOCK_USERS[0]);
+  };
+
+  const logout = () => {
+    setCurrentUser(null);
+    localStorage.removeItem('currentUser');
+  };
+
+  const updateProfile = (data: Partial<User>) => {
+    if (currentUser) {
+      setCurrentUser({ ...currentUser, ...data });
+    }
+  };
 
   const createBooking = (car: Car, startDate: string, endDate: string) => {
     if (!currentUser) return;
@@ -100,8 +128,33 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     ));
   };
 
+  const addCar = (carData: Partial<Car>) => {
+    const newCar: Car = {
+      id: `car_${Date.now()}`,
+      agencyId: currentUser?.agencyId || 'agency_1',
+      name: carData.name || 'Nouveau Véhicule',
+      type: carData.type || 'Luxe',
+      category: carData.category || 'Luxury',
+      price: carData.price || 0,
+      rating: 5.0,
+      image: carData.image || 'https://picsum.photos/seed/newcar/600/400',
+      seats: carData.seats || 5,
+      transmission: carData.transmission || 'Automatic',
+      fuel: carData.fuel || 'Petrol',
+      description: carData.description || '',
+      features: carData.features || [],
+      location: carData.location || 'Paris, FR',
+      coordinates: carData.coordinates || { lat: 48.8566, lng: 2.3522 },
+    };
+    setCars(prev => [newCar, ...prev]);
+  };
+
+  const removeCar = (carId: string) => {
+    setCars(prev => prev.filter(c => c.id !== carId));
+  };
+
   const filteredCars = useMemo(() => {
-    return MOCK_CARS.filter(car => {
+    return cars.filter(car => {
       if (filters.category !== 'Tout' && car.category !== filters.category) return false;
       if (car.price < filters.priceRange[0] || car.price > filters.priceRange[1]) return false;
       if (filters.transmission && car.transmission !== filters.transmission) return false;
@@ -114,16 +167,20 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
   return (
     <BookingContext.Provider value={{
       currentUser,
-      cars: MOCK_CARS,
+      cars,
       agencies: MOCK_AGENCIES,
       bookings,
       filters,
       setFilters,
       filteredCars,
       login,
+      loginSocial,
       logout,
+      updateProfile,
       createBooking,
       updateBookingStatus,
+      addCar,
+      removeCar,
       isDarkMode,
       toggleDarkMode
     }}>

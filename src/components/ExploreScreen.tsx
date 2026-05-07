@@ -90,12 +90,13 @@ export default function ExploreScreen({
         <div className="px-6 space-y-6">
           {filteredCars.length > 0 ? (
             filteredCars.map((car, index) => (
-              <CarCard 
-                key={car.id} 
-                car={car} 
-                index={index} 
-                onClick={() => onSelectCar(car)} 
-              />
+              <div key={car.id}>
+                <CarCard 
+                  car={car} 
+                  index={index} 
+                  onClick={() => onSelectCar(car)} 
+                />
+              </div>
             ))
           ) : (
             <div className="py-20 text-center space-y-4">
